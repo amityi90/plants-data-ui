@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Menu, User, Activity, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LeafLogo from './LeafLogo';
@@ -12,6 +12,18 @@ export default function Header() {
   const [navOpen, setNavOpen] = useState(false);
   const [authModal, setAuthModal] = useState<'login' | 'register' | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    function handleClick(e: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [userMenuOpen]);
 
   return (
     <>
@@ -21,7 +33,7 @@ export default function Header() {
 
           <div className="flex items-center gap-3">
             {/* User button */}
-            <div className="relative">
+            <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setUserMenuOpen(p => !p)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-forest/20 text-forest-dark hover:bg-forest/10 transition-colors text-sm"
