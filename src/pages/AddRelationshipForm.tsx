@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { GitBranch } from 'lucide-react';
 import PlantSearchInput from '../components/PlantSearchInput';
 import { addRelation } from '../api/relations';
+import Spinner from '../components/Spinner';
+import FadeIn from '../components/FadeIn';
 import type { Plant } from '../types';
 
 export default function AddRelationshipForm() {
@@ -26,7 +28,9 @@ export default function AddRelationshipForm() {
         is_companion: isCompanion,
         explanation,
       });
-      setSuccess(`Relationship between "${plantA.name}" and "${plantB.name}" added!`);
+      setSuccess(
+        `Relationship between "${plantA.name}" and "${plantB.name}" submitted for review.`
+      );
       setPlantA(null);
       setPlantB(null);
       setExplanation('');
@@ -39,6 +43,7 @@ export default function AddRelationshipForm() {
   }
 
   return (
+    <FadeIn>
     <div className="max-w-2xl mx-auto px-4 py-10">
       <div className="flex items-center gap-3 mb-8">
         <GitBranch size={28} className="text-forest" />
@@ -119,11 +124,13 @@ export default function AddRelationshipForm() {
         <button
           type="submit"
           disabled={loading || !plantA || !plantB}
-          className="w-full rounded-xl bg-forest py-3 text-cream font-semibold text-base hover:bg-forest-dark transition-colors disabled:opacity-50 mt-1"
+          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-forest py-3 text-cream font-semibold text-base hover:bg-forest-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-1"
         >
+          {loading && <Spinner size={16} className="border-cream/30 border-t-cream" />}
           {loading ? 'Adding...' : 'Add Relationship'}
         </button>
       </form>
     </div>
+    </FadeIn>
   );
 }

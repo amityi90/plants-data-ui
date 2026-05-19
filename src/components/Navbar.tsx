@@ -1,4 +1,4 @@
-import { X, Leaf, Plus, GitBranch, Info, List, Activity } from 'lucide-react';
+import { X, Leaf, Plus, GitBranch, Info, List, Activity, Network } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -10,9 +10,10 @@ interface Props {
 }
 
 const navLinks = [
+  { to: '/plants', label: 'See All Plants', icon: <List size={18} /> },
+  { to: '/relations', label: 'Relationships', icon: <Network size={18} /> },
   { to: '/add-plant', label: 'Add Plant', icon: <Plus size={18} /> },
   { to: '/add-relationship', label: 'Add Relationship', icon: <GitBranch size={18} /> },
-  { to: '/plants', label: 'See All Plants', icon: <List size={18} /> },
   { to: '/about', label: 'About', icon: <Info size={18} /> },
 ];
 

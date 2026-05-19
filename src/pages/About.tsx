@@ -1,7 +1,9 @@
 import { Leaf, Heart, Database, Users } from 'lucide-react';
+import FadeIn from '../components/FadeIn';
 
 export default function About() {
   return (
+    <FadeIn>
     <div className="max-w-2xl mx-auto px-4 py-12">
       <div className="flex items-center gap-3 mb-2">
         <Leaf size={28} className="text-forest" />
@@ -49,5 +51,6 @@ export default function About() {
         </section>
       </div>
     </div>
+    </FadeIn>
   );
 }

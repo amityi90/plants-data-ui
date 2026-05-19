@@ -5,6 +5,8 @@ import Header from './components/Header';
 import AddPlantForm from './pages/AddPlantForm';
 import AddRelationshipForm from './pages/AddRelationshipForm';
 import ShowAllPlants from './pages/ShowAllPlants';
+import PlantDetail from './pages/PlantDetail';
+import Relations from './pages/Relations';
 import About from './pages/About';
 import MyActivity from './pages/MyActivity';
 
@@ -31,6 +33,8 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Navigate to="/plants" replace />} />
               <Route path="/plants" element={<ShowAllPlants />} />
+              <Route path="/plants/:id" element={<PlantDetail />} />
+              <Route path="/relations" element={<Relations />} />
               <Route path="/add-plant" element={<AddPlantForm />} />
               <Route path="/add-relationship" element={<AddRelationshipForm />} />
               <Route path="/about" element={<About />} />

@@ -1,4 +1,5 @@
-const BASE_URL = 'http://63.177.254.134:5000';
+// const BASE_URL = 'http://63.177.254.134:5000';
+const BASE_URL = 'http://localhost:5000';
 
 function getToken(): string | null {
   return localStorage.getItem('jwt');
@@ -37,6 +38,23 @@ export async function post<T>(path: string, body: unknown, auth = false): Promis
     method: 'POST',
     headers: buildHeaders(auth),
     body: JSON.stringify(body),
+  });
+  return handleResponse<T>(res);
+}
+
+export async function patch<T>(path: string, body: unknown, auth = true): Promise<T> {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: 'PATCH',
+    headers: buildHeaders(auth),
+    body: JSON.stringify(body),
+  });
+  return handleResponse<T>(res);
+}
+
+export async function del<T>(path: string, auth = true): Promise<T> {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: 'DELETE',
+    headers: buildHeaders(auth),
   });
   return handleResponse<T>(res);
 }
