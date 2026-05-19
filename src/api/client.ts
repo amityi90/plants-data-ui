@@ -1,5 +1,4 @@
-// const BASE_URL = 'http://63.177.254.134:5000';
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = import.meta.env.VITE_API_BASE ?? 'http://localhost:5000';
 
 function getToken(): string | null {
   return localStorage.getItem('jwt');
