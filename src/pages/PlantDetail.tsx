@@ -57,7 +57,7 @@ export default function PlantDetail() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-10">
-        <CenteredSpinner label="Loading plant..." />
+        <CenteredSpinner label="Loading plant…" />
       </div>
     );
   }
@@ -66,12 +66,12 @@ export default function PlantDetail() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-10">
         <EmptyState
-          icon={<Sprout size={40} />}
+          icon={<Sprout size={36} strokeWidth={1.5} />}
           title={error || 'Plant not found'}
           action={
             <Link
               to="/plants"
-              className="inline-flex items-center gap-1 text-forest hover:text-forest-dark text-sm font-medium"
+              className="inline-flex items-center gap-1.5 text-forest hover:text-forest-dark text-sm font-medium mt-2"
             >
               <ArrowLeft size={14} /> Back to plants
             </Link>
@@ -89,78 +89,60 @@ export default function PlantDetail() {
       <div className="max-w-5xl mx-auto px-4 py-10">
         <Link
           to="/plants"
-          className="inline-flex items-center gap-1 text-forest/70 hover:text-forest text-sm mb-6 no-underline"
+          className="inline-flex items-center gap-1.5 text-sm text-forest/60 hover:text-forest transition-colors mb-5 no-underline"
         >
           <ArrowLeft size={14} /> Back to plants
         </Link>
 
         <div className="grid md:grid-cols-[1fr_1.4fr] gap-6 md:gap-8 mb-10">
           {/* Hero */}
-          <div className="bg-white/70 border border-forest/10 rounded-2xl shadow-sm overflow-hidden">
+          <div className="card-soft rounded-3xl overflow-hidden animate-fade-in-up">
             <div className="aspect-[4/3] w-full">
               <PlantImage url={plant.image_url} name={plant.name} size="full" className="rounded-none" />
             </div>
             <div className="p-5">
               <div className="flex items-center gap-2 mb-2">
-                {plant.is_tree ? (
-                  <TreePine size={20} className="text-bark" />
-                ) : (
-                  <Leaf size={20} className="text-forest-light" />
-                )}
-                <h1
-                  className="text-3xl text-forest-dark m-0"
-                  style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600 }}
-                >
+                <span className={`inline-flex items-center justify-center w-9 h-9 rounded-xl ${
+                  plant.is_tree
+                    ? 'bg-bark/15 text-bark ring-1 ring-bark/20'
+                    : 'bg-forest-light/20 text-forest ring-1 ring-forest/15'
+                }`}>
+                  {plant.is_tree ? <TreePine size={18} strokeWidth={1.7} /> : <Leaf size={18} strokeWidth={1.7} />}
+                </span>
+                <h1 className="serif text-3xl font-semibold text-forest-dark m-0 tracking-tight">
                   {plant.name}
                 </h1>
               </div>
-              <div className="flex flex-wrap items-center gap-3 mt-3 text-sm text-forest/70">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-sm text-forest/70">
                 {plant.height != null && (
                   <span className="inline-flex items-center gap-1">
-                    <Ruler size={13} /> {plant.height} cm
+                    <Ruler size={13} className="text-bark" />
+                    <span className="font-semibold text-forest-dark">{plant.height}</span> cm
                   </span>
                 )}
                 {plant.spread != null && (
                   <span className="inline-flex items-center gap-1">
-                    ↔ {plant.spread} cm
+                    ↔ <span className="font-semibold text-forest-dark">{plant.spread}</span> cm
                   </span>
                 )}
                 {plant.water != null && (
                   <span className="inline-flex items-center gap-1">
-                    <Droplets size={13} className="text-blue-400" /> {plant.water} ml
+                    <Droplets size={13} className="text-forest-light" />
+                    <span className="font-semibold text-forest-dark">{plant.water}</span> ml
                   </span>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Detail grid */}
-          <div className="bg-white/70 border border-forest/10 rounded-2xl shadow-sm p-6 flex flex-col gap-5">
-            <div>
-              <p className="text-xs uppercase tracking-wide text-forest/50 m-0 mb-1">Planting season</p>
-              <p className="text-base text-forest-dark m-0">
-                {monthLabel(plant.planting_start)} – {monthLabel(plant.planting_end)}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-wide text-forest/50 m-0 mb-1">Harvesting season</p>
-              <p className="text-base text-forest-dark m-0">
-                {monthLabel(plant.harvesting_start)} – {monthLabel(plant.harvesting_end)}
-              </p>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 border-t border-forest/10">
-              <div>
-                <p className="text-xs text-forest/50 m-0 mb-1">Shadow</p>
-                <BoolBadge value={!!plant.shadow} trueLabel="Likes shade" falseLabel="Full sun" />
-              </div>
-              <div>
-                <p className="text-xs text-forest/50 m-0 mb-1">Body water</p>
-                <BoolBadge value={!!plant.body_water} trueLabel="Tolerates" falseLabel="Avoid" />
-              </div>
-              <div>
-                <p className="text-xs text-forest/50 m-0 mb-1">Type</p>
-                <BoolBadge value={!!plant.is_tree} trueLabel="Tree" falseLabel="Plant" />
-              </div>
+          {/* Detail */}
+          <div className="card-soft rounded-3xl p-6 flex flex-col gap-5 animate-fade-in-up delay-75">
+            <Fact label="Planting season" value={`${monthLabel(plant.planting_start)} – ${monthLabel(plant.planting_end)}`} />
+            <Fact label="Harvesting season" value={`${monthLabel(plant.harvesting_start)} – ${monthLabel(plant.harvesting_end)}`} />
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-3 border-t border-forest/10">
+              <BadgeCol label="Shadow" badge={<BoolBadge value={!!plant.shadow} trueLabel="Likes shade" falseLabel="Full sun" />} />
+              <BadgeCol label="Body water" badge={<BoolBadge value={!!plant.body_water} trueLabel="Tolerates" falseLabel="Avoid" />} />
+              <BadgeCol label="Type" badge={<BoolBadge value={!!plant.is_tree} trueLabel="Tree" falseLabel="Plant" />} />
             </div>
           </div>
         </div>
@@ -170,20 +152,19 @@ export default function PlantDetail() {
           <RelationSection
             title="Companions"
             icon={<Heart size={18} className="text-forest" />}
-            tint="bg-forest/5 border-forest/10"
-            badgeTint="bg-forest/15 text-forest"
             relations={companions}
             currentId={plant.id}
             emptyText="No companions logged yet."
+            delay="delay-150"
           />
           <RelationSection
             title="Antagonists"
             icon={<Swords size={18} className="text-terra" />}
-            tint="bg-terra/5 border-terra/15"
-            badgeTint="bg-terra/15 text-terra"
             relations={antagonists}
             currentId={plant.id}
             emptyText="No antagonists logged yet."
+            tone="terra"
+            delay="delay-225"
           />
         </div>
       </div>
@@ -191,36 +172,62 @@ export default function PlantDetail() {
   );
 }
 
+function Fact({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-forest/50 m-0 mb-1">{label}</p>
+      <p className="text-base text-forest-dark m-0">{value}</p>
+    </div>
+  );
+}
+
+function BadgeCol({ label, badge }: { label: string; badge: React.ReactNode }) {
+  return (
+    <div>
+      <p className="text-[10px] uppercase tracking-wider text-forest/45 mb-1.5">{label}</p>
+      {badge}
+    </div>
+  );
+}
+
 function RelationSection({
   title,
   icon,
-  tint,
-  badgeTint,
   relations,
   currentId,
   emptyText,
+  tone = 'forest',
+  delay = '',
 }: {
   title: string;
   icon: React.ReactNode;
-  tint: string;
-  badgeTint: string;
   relations: RelationWithPlants[];
   currentId: number;
   emptyText: string;
+  tone?: 'forest' | 'terra';
+  delay?: string;
 }) {
   return (
-    <section className={`rounded-2xl border ${tint} p-5`}>
+    <section className={`card-soft rounded-2xl p-5 animate-fade-in-up ${delay}`}>
       <div className="flex items-center gap-2 mb-4">
-        {icon}
-        <h2 className="text-xl text-forest-dark m-0" style={{ fontFamily: "'Playfair Display', serif" }}>
-          {title}
-        </h2>
-        <span className={`ml-auto text-xs font-semibold px-2 py-0.5 rounded-full ${badgeTint}`}>
+        <span className={`inline-flex items-center justify-center w-9 h-9 rounded-xl ${
+          tone === 'terra'
+            ? 'bg-terra/10 ring-1 ring-terra/20'
+            : 'bg-forest/8 ring-1 ring-forest/15'
+        }`}>
+          {icon}
+        </span>
+        <h2 className="serif text-xl text-forest-dark m-0 tracking-tight">{title}</h2>
+        <span className={`ml-auto text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+          tone === 'terra'
+            ? 'bg-terra/10 text-terra ring-1 ring-terra/20'
+            : 'bg-forest/10 text-forest ring-1 ring-forest/20'
+        }`}>
           {relations.length}
         </span>
       </div>
       {relations.length === 0 ? (
-        <p className="text-sm text-forest/50 m-0">{emptyText}</p>
+        <p className="text-sm text-forest/50 m-0 serif italic">{emptyText}</p>
       ) : (
         <ul className="flex flex-col gap-2 m-0 p-0 list-none">
           {relations.map((r) => {
@@ -232,7 +239,7 @@ function RelationSection({
               <li key={r.id}>
                 <Link
                   to={`/plants/${otherId}`}
-                  className="flex items-center gap-3 bg-white/70 border border-forest/10 rounded-xl px-3 py-2 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 no-underline"
+                  className="flex items-center gap-3 bg-white/60 border border-forest/10 rounded-xl px-3 py-2 hover:bg-white/85 hover:border-forest/25 hover:-translate-y-0.5 transition-all duration-200 no-underline"
                 >
                   <PlantImage url={otherImg} name={otherName} size="sm" />
                   <div className="min-w-0 flex-1">

@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu, User, Activity, LogOut } from 'lucide-react';
+import { Menu, User, Activity, LogOut, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LeafLogo from './LeafLogo';
 import Navbar from './Navbar';
 import AuthModal from './AuthModal';
 import { useAuth } from '../context/AuthContext';
+import { usePopup } from '../context/PopupContext';
 
 export default function Header() {
   const { user, logout } = useAuth();
+  const { showPopup } = usePopup();
   const navigate = useNavigate();
   const [navOpen, setNavOpen] = useState(false);
   const [authModal, setAuthModal] = useState<'login' | 'register' | null>(null);
@@ -25,42 +27,58 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, [userMenuOpen]);
 
+  function handleSignOut() {
+    logout();
+    setUserMenuOpen(false);
+    showPopup({
+      variant: 'info',
+      title: 'Signed out',
+      message: 'See you soon.',
+    });
+  }
+
   return (
     <>
-      <header className="sticky top-0 z-30 w-full bg-cream/90 backdrop-blur-md border-b border-forest/10 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-30 w-full card-glass border-b border-forest/10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-5 h-[68px] flex items-center justify-between gap-3">
           <LeafLogo />
 
-          <div className="flex items-center gap-3">
-            {/* User button */}
+          <div className="flex items-center gap-2 ml-auto">
+            {/* User pill */}
             <div className="relative" ref={userMenuRef}>
               <button
-                onClick={() => setUserMenuOpen(p => !p)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-forest/20 text-forest-dark hover:bg-forest/10 transition-colors text-sm"
+                onClick={() => setUserMenuOpen((p) => !p)}
+                className="flex items-center gap-1.5 rounded-full border border-forest/20 bg-cream/70 px-3 py-1.5 text-sm text-forest-dark hover:bg-forest/10 hover:border-forest/30 transition-all"
                 aria-label="User menu"
               >
-                <User size={16} className="text-forest" />
-                {user ? <span className="hidden sm:inline max-w-24 truncate">{user.email.split('@')[0]}</span> : <span className="hidden sm:inline">Account</span>}
+                <User size={15} className="text-forest" />
+                <span className="hidden sm:inline max-w-[7rem] truncate">
+                  {user ? user.email.split('@')[0] : 'Account'}
+                </span>
+                <ChevronDown size={13} className={`text-forest/55 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-52 rounded-xl bg-cream border border-forest/20 shadow-lg overflow-hidden">
+                <div className="absolute right-0 mt-2 w-56 rounded-2xl card-soft overflow-hidden animate-fade-in">
                   {user ? (
                     <>
-                      <p className="px-4 py-2 text-xs text-forest/60 border-b border-forest/10 truncate">{user.email}</p>
+                      <p className="px-4 py-3 text-xs text-forest/60 border-b border-forest/10 truncate">
+                        Signed in as<br />
+                        <span className="text-forest-dark font-medium">{user.email}</span>
+                      </p>
                       <button
                         onClick={() => { navigate('/my-activity'); setUserMenuOpen(false); }}
-                        className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-forest-dark hover:bg-forest/10 transition-colors"
+                        className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-forest-dark hover:bg-forest/10 transition-colors text-left"
                       >
                         <Activity size={15} className="text-forest" />
                         My Activity
                       </button>
                       <button
-                        onClick={() => { logout(); setUserMenuOpen(false); }}
-                        className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-terra hover:bg-terra/10 transition-colors"
+                        onClick={handleSignOut}
+                        className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-terra hover:bg-terra/10 transition-colors text-left"
                       >
                         <LogOut size={15} />
-                        Log out
+                        Sign out
                       </button>
                     </>
                   ) : (
@@ -83,13 +101,13 @@ export default function Header() {
               )}
             </div>
 
-            {/* Hamburger */}
+            {/* Hamburger menu */}
             <button
               onClick={() => setNavOpen(true)}
-              className="p-2 rounded-full hover:bg-forest/10 transition-colors text-forest-dark"
+              className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-forest/20 bg-cream/70 text-forest-dark hover:bg-forest/10 hover:border-forest/30 transition-all"
               aria-label="Open menu"
             >
-              <Menu size={22} />
+              <Menu size={20} />
             </button>
           </div>
         </div>

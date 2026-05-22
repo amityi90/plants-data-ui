@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { GitBranch, Heart, Swords, Layers, List } from 'lucide-react';
+import { GitBranch, Heart, Swords, Layers, List, Search } from 'lucide-react';
 import { getAllRelations } from '../api/relations';
 import PlantSearchInput from '../components/PlantSearchInput';
 import PlantImage from '../components/PlantImage';
@@ -72,54 +72,62 @@ export default function Relations() {
   return (
     <FadeIn>
       <div className="max-w-6xl mx-auto px-4 py-10">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <GitBranch size={28} className="text-forest" />
-          <h1 className="text-3xl text-forest-dark m-0">Relationships</h1>
-          <span className="ml-auto text-sm text-forest/60">
-            {filtered.length} {filtered.length === 1 ? 'relation' : 'relations'}
-          </span>
+        {/* Hero */}
+        <div className="mb-8 animate-fade-in-up">
+          <p className="text-xs uppercase tracking-[0.25em] text-forest/50 mb-2">Browse</p>
+          <div className="flex items-baseline gap-3 flex-wrap">
+            <h1 className="serif text-4xl text-forest-dark m-0 tracking-tight">
+              <GitBranch className="inline-block mr-2 -mt-2 text-forest" size={30} />
+              Relationships
+            </h1>
+            <span className="text-sm text-forest/55">
+              {filtered.length} {filtered.length === 1 ? 'relation' : 'relations'}
+            </span>
+          </div>
         </div>
 
         {/* Controls */}
-        <div className="bg-white/60 border border-forest/10 rounded-2xl shadow-sm p-4 mb-6 grid gap-4 md:grid-cols-[1fr_auto_auto]">
+        <div className="card-soft rounded-2xl p-4 mb-6 grid gap-4 md:grid-cols-[1fr_auto_auto] items-end animate-fade-in-up delay-75">
           <div>
-            <label className="block text-xs uppercase tracking-wide text-forest/50 mb-1">
+            <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-forest/55 mb-1.5">
               Focus on a plant
             </label>
-            <PlantSearchInput
-              value={focused?.id ?? null}
-              onChange={(p) => setFocused(p)}
-              placeholder="Search a plant..."
-            />
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/60 border border-forest/15">
+              <Search size={15} className="text-forest/55 shrink-0" />
+              <PlantSearchInput
+                value={focused?.id ?? null}
+                onChange={(p) => setFocused(p)}
+                placeholder="Search a plant…"
+              />
+            </div>
           </div>
 
           <FilterToggle filter={filter} onChange={setFilter} />
           <ViewToggle view={view} onChange={setView} />
         </div>
 
-        {loading && <CenteredSpinner label="Loading relationships..." />}
+        {loading && <CenteredSpinner label="Loading relationships…" />}
 
         {error && (
-          <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-red-700 mb-4">
+          <div className="rounded-2xl bg-terra/10 border border-terra/30 px-5 py-4 text-terra">
             {error}
           </div>
         )}
 
         {!loading && !error && filtered.length === 0 && (
           <EmptyState
-            icon={<GitBranch size={40} />}
+            icon={<GitBranch size={36} strokeWidth={1.5} />}
             title="No relationships match."
             subtitle={
               focused
-                ? `No relationships found for ${focused.name} with the current filter.`
+                ? `Nothing found for ${focused.name} with the current filter.`
                 : 'Try changing the filter.'
             }
           />
         )}
 
         {!loading && filtered.length > 0 && view === 'flat' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in-up delay-150">
             {filtered.map((r) => (
               <RelationCard key={r.id} relation={r} focusedPlantId={focused?.id} />
             ))}
@@ -127,21 +135,18 @@ export default function Relations() {
         )}
 
         {!loading && filtered.length > 0 && view === 'grouped' && (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-5 animate-fade-in-up delay-150">
             {groupedByPlant.map(({ plant, rels }) => (
               <section
                 key={plant!.id}
-                className="bg-white/70 border border-forest/10 rounded-2xl shadow-sm p-4"
+                className="card-soft rounded-2xl p-4"
               >
                 <div className="flex items-center gap-3 mb-3">
                   <PlantImage url={plant!.image_url} name={plant!.name} size="sm" />
-                  <h2
-                    className="text-xl text-forest-dark m-0"
-                    style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600 }}
-                  >
+                  <h2 className="serif text-xl font-semibold text-forest-dark m-0 tracking-tight">
                     {plant!.name}
                   </h2>
-                  <span className="text-xs text-forest/50">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-forest/45">
                     {rels.length} {rels.length === 1 ? 'relation' : 'relations'}
                   </span>
                 </div>
@@ -155,21 +160,21 @@ export default function Relations() {
                       <li key={`${plant!.id}-${r.id}`}>
                         <Link
                           to={`/plants/${otherId}`}
-                          className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-forest/5 transition-colors no-underline"
+                          className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-forest/5 transition-colors no-underline"
                         >
                           <PlantImage url={otherImg} name={otherName} size="sm" />
                           <span className="text-sm font-medium text-forest-dark flex-1 min-w-0 truncate">
                             {otherName}
                           </span>
                           <span
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold shrink-0 ${
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0 ${
                               r.is_companion
-                                ? 'bg-forest/15 text-forest'
-                                : 'bg-terra/15 text-terra'
+                                ? 'bg-forest/10 text-forest ring-1 ring-forest/20'
+                                : 'bg-terra/10 text-terra ring-1 ring-terra/20'
                             }`}
                           >
                             {r.is_companion ? <Heart size={11} /> : <Swords size={11} />}
-                            {r.is_companion ? 'companion' : 'antagonist'}
+                            {r.is_companion ? 'Companion' : 'Antagonist'}
                           </span>
                           {r.explanation && (
                             <span className="hidden md:inline text-xs text-forest/55 italic truncate max-w-[40%]">
@@ -201,8 +206,8 @@ function FilterToggle({
     <button
       type="button"
       onClick={() => onChange(mode)}
-      className={`inline-flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-        filter === mode ? activeClass : 'text-forest/60 hover:bg-forest/5'
+      className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-full transition-all ${
+        filter === mode ? activeClass : 'text-forest/55 hover:text-forest hover:bg-white/50'
       }`}
     >
       {icon}
@@ -210,10 +215,10 @@ function FilterToggle({
     </button>
   );
   return (
-    <div className="flex items-center gap-1 bg-soil rounded-xl p-1">
-      {opt('all', 'All', null, 'bg-white text-forest-dark shadow-sm')}
-      {opt('companions', 'Companions', <Heart size={13} />, 'bg-forest text-cream')}
-      {opt('antagonists', 'Antagonists', <Swords size={13} />, 'bg-terra text-cream')}
+    <div className="inline-flex rounded-full bg-cream-dark/60 ring-1 ring-forest/15 p-0.5 gap-0.5">
+      {opt('all', 'All', null, 'bg-forest text-cream shadow-sm shadow-forest/20')}
+      {opt('companions', 'Companions', <Heart size={11} />, 'bg-forest text-cream shadow-sm shadow-forest/20')}
+      {opt('antagonists', 'Antagonists', <Swords size={11} />, 'bg-terra text-cream shadow-sm shadow-terra/20')}
     </div>
   );
 }
@@ -226,15 +231,15 @@ function ViewToggle({
   onChange: (v: ViewMode) => void;
 }) {
   return (
-    <div className="flex items-center gap-1 bg-soil rounded-xl p-1">
+    <div className="inline-flex rounded-full bg-cream-dark/60 ring-1 ring-forest/15 p-0.5 gap-0.5">
       <button
         type="button"
         onClick={() => onChange('grouped')}
         title="Grouped by plant"
-        className={`p-2 rounded-lg transition-colors ${
+        className={`p-1.5 rounded-full transition-all ${
           view === 'grouped'
-            ? 'bg-white text-forest-dark shadow-sm'
-            : 'text-forest/60 hover:bg-forest/5'
+            ? 'bg-forest text-cream shadow-sm shadow-forest/20'
+            : 'text-forest/55 hover:text-forest hover:bg-white/50'
         }`}
       >
         <Layers size={16} />
@@ -243,10 +248,10 @@ function ViewToggle({
         type="button"
         onClick={() => onChange('flat')}
         title="Flat list"
-        className={`p-2 rounded-lg transition-colors ${
+        className={`p-1.5 rounded-full transition-all ${
           view === 'flat'
-            ? 'bg-white text-forest-dark shadow-sm'
-            : 'text-forest/60 hover:bg-forest/5'
+            ? 'bg-forest text-cream shadow-sm shadow-forest/20'
+            : 'text-forest/55 hover:text-forest hover:bg-white/50'
         }`}
       >
         <List size={16} />

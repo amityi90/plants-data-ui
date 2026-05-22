@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Sprout } from 'lucide-react';
 import { addPlant } from '../api/plants';
 import { usePlants } from '../context/PlantsContext';
+import { usePopup } from '../context/PopupContext';
 import PlantFormFields from '../components/PlantFormFields';
 import Spinner from '../components/Spinner';
 import FadeIn from '../components/FadeIn';
@@ -25,22 +26,23 @@ const defaultForm: NewPlant = {
 export default function AddPlantForm() {
   const [form, setForm] = useState<NewPlant>(defaultForm);
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const { refresh } = usePlants();
+  const { showPopup } = usePopup();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-    setSuccess('');
     setLoading(true);
     try {
+      const name = form.name;
       await addPlant(form);
-      setSuccess(
-        `"${form.name}" was submitted for review. You'll see it on My Activity until it's approved.`
-      );
       setForm(defaultForm);
       refresh();
+      showPopup({
+        title: 'Plant added',
+        message: `"${name}" is pending approval. See it on My Activity.`,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add plant');
     } finally {
@@ -51,34 +53,35 @@ export default function AddPlantForm() {
   return (
     <FadeIn>
       <div className="max-w-2xl mx-auto px-4 py-10">
-        <div className="flex items-center gap-3 mb-8">
-          <Sprout size={28} className="text-forest" />
-          <h1 className="text-3xl text-forest-dark m-0">Add a Plant</h1>
+        <div className="mb-8 animate-fade-in-up">
+          <p className="text-xs uppercase tracking-[0.25em] text-forest/50 mb-2">Contribute</p>
+          <h1 className="serif text-4xl text-forest-dark m-0 tracking-tight">
+            <Sprout className="inline-block mr-2 -mt-2 text-forest" size={30} />
+            Add a plant
+          </h1>
+          <p className="text-sm text-forest/60 mt-2 max-w-xl leading-relaxed">
+            Submit a new plant to the catalog. An admin will review it before it goes public.
+          </p>
         </div>
 
-        {success && (
-          <div className="mb-6 rounded-xl bg-forest/10 border border-forest/20 px-4 py-3 text-forest font-medium">
-            {success}
-          </div>
-        )}
         {error && (
-          <div className="mb-6 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-red-700">
+          <div className="mb-6 rounded-2xl bg-terra/10 border border-terra/30 px-5 py-4 text-terra animate-fade-in-up">
             {error}
           </div>
         )}
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white/60 rounded-2xl border border-forest/10 shadow-sm p-6 flex flex-col gap-5"
+          className="card-soft rounded-3xl p-6 sm:p-8 flex flex-col gap-5 animate-fade-in-up delay-75"
         >
           <PlantFormFields value={form} onChange={setForm} />
           <button
             type="submit"
             disabled={loading}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-forest py-3 text-cream font-semibold text-base hover:bg-forest-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-1"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-forest to-forest-dark py-3 text-cream font-semibold text-base tracking-wide hover:from-forest-dark hover:to-forest-dark transition-all disabled:opacity-60 disabled:cursor-not-allowed shadow-md shadow-forest/25 hover:shadow-lg hover:shadow-forest/35 mt-1"
           >
             {loading && <Spinner size={16} className="border-cream/30 border-t-cream" />}
-            {loading ? 'Adding...' : 'Add Plant'}
+            {loading ? 'Adding…' : 'Add plant'}
           </button>
         </form>
       </div>

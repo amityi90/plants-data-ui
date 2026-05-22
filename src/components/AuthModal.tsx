@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Leaf } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { usePopup } from '../context/PopupContext';
+import Spinner from './Spinner';
 
 type Mode = 'login' | 'register';
 
@@ -11,27 +13,29 @@ interface Props {
 
 export default function AuthModal({ initialMode = 'login', onClose }: Props) {
   const { login, register } = useAuth();
+  const { showPopup } = usePopup();
   const [mode, setMode] = useState<Mode>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState('');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-    setSuccess('');
     setLoading(true);
     try {
       if (mode === 'login') {
         await login(email, password);
         onClose();
+        showPopup({ title: 'Welcome back', message: email });
       } else {
         await register(email, password);
-        setSuccess('Registered! Please log in.');
-        setMode('login');
-        setPassword('');
+        onClose();
+        showPopup({
+          title: 'Account created',
+          message: 'Pending approval — you can log in once approved.',
+        });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
@@ -41,69 +45,78 @@ export default function AuthModal({ initialMode = 'login', onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-forest-dark/40 backdrop-blur-sm">
-      <div className="relative w-full max-w-sm mx-4 rounded-2xl bg-cream shadow-2xl border border-forest/20 p-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-forest-dark/40 backdrop-blur-sm animate-backdrop-fade">
+      <div className="relative w-full max-w-md card-soft rounded-3xl p-8 animate-pop-in">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-forest/60 hover:text-forest transition-colors"
+          className="absolute top-4 right-4 text-forest/60 hover:text-forest hover:bg-forest/10 rounded-full p-1.5 transition-colors"
           aria-label="Close"
         >
           <X size={20} />
         </button>
 
-        <h2 className="text-2xl mb-6 text-center text-forest-dark" style={{ fontFamily: "'Playfair Display', serif" }}>
-          {mode === 'login' ? 'Welcome back' : 'Join us'}
-        </h2>
-
-        {success && (
-          <p className="mb-4 text-sm text-center text-forest bg-forest/10 rounded-lg px-3 py-2">{success}</p>
-        )}
+        <div className="flex flex-col items-center mb-6">
+          <span className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-forest to-forest-dark text-cream shadow-lg shadow-forest/30 mb-3">
+            <Leaf size={26} />
+          </span>
+          <h2 className="serif text-2xl text-forest-dark m-0 tracking-tight">
+            {mode === 'login' ? 'Welcome back' : 'Join us'}
+          </h2>
+          <p className="text-xs text-forest/55 mt-1">
+            {mode === 'login' ? 'Sign in to add plants and relationships.' : 'Create an account to contribute.'}
+          </p>
+        </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="block text-sm text-forest-dark mb-1" htmlFor="auth-email">Email</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-forest/60 mb-1.5" htmlFor="auth-email">Email</label>
             <input
               id="auth-email"
               type="email"
               required
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-forest/30 bg-white px-3 py-2 text-forest-dark focus:outline-none focus:ring-2 focus:ring-forest/50"
+              className="w-full rounded-xl border border-forest/20 bg-white/80 px-4 py-2.5 text-forest-dark placeholder-forest/30 focus:outline-none focus:ring-2 focus:ring-forest/40 focus:border-forest/40 transition-all"
               placeholder="you@example.com"
+              autoComplete="email"
             />
           </div>
           <div>
-            <label className="block text-sm text-forest-dark mb-1" htmlFor="auth-password">Password</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-forest/60 mb-1.5" htmlFor="auth-password">Password</label>
             <input
               id="auth-password"
               type="password"
               required
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-forest/30 bg-white px-3 py-2 text-forest-dark focus:outline-none focus:ring-2 focus:ring-forest/50"
+              className="w-full rounded-xl border border-forest/20 bg-white/80 px-4 py-2.5 text-forest-dark placeholder-forest/30 focus:outline-none focus:ring-2 focus:ring-forest/40 focus:border-forest/40 transition-all"
               placeholder="••••••••"
+              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
             />
           </div>
 
-          {error && <p className="text-sm text-red-600 text-center">{error}</p>}
+          {error && (
+            <p className="text-sm text-terra text-center bg-terra/10 border border-terra/20 rounded-xl px-3 py-2.5">{error}</p>
+          )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-forest py-2.5 text-cream font-semibold hover:bg-forest-dark transition-colors disabled:opacity-60"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-forest to-forest-dark py-2.5 text-cream font-semibold tracking-wide hover:from-forest-dark hover:to-forest-dark transition-all disabled:opacity-60 shadow-md shadow-forest/25 hover:shadow-lg hover:shadow-forest/35 mt-1"
           >
-            {loading ? '...' : mode === 'login' ? 'Log in' : 'Register'}
+            {loading && <Spinner size={14} className="border-cream/30 border-t-cream" />}
+            {loading ? '…' : mode === 'login' ? 'Sign in' : 'Register'}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-forest/70">
+        <p className="mt-5 text-center text-sm text-forest/60">
           {mode === 'login' ? (
             <>Don't have an account?{' '}
-              <button onClick={() => { setMode('register'); setError(''); setSuccess(''); }} className="text-terra hover:underline">Register</button>
+              <button onClick={() => { setMode('register'); setError(''); }} className="text-terra hover:underline font-medium">Register</button>
             </>
           ) : (
             <>Already have an account?{' '}
-              <button onClick={() => { setMode('login'); setError(''); setSuccess(''); }} className="text-terra hover:underline">Log in</button>
+              <button onClick={() => { setMode('login'); setError(''); }} className="text-terra hover:underline font-medium">Log in</button>
             </>
           )}
         </p>

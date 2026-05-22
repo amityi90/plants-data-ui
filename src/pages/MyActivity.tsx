@@ -36,9 +36,9 @@ import type { Plant, Relation, NewPlant } from '../types';
 
 function PendingChip() {
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-terra/15 text-terra">
-      <Clock size={11} />
-      pending review
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-terra/10 text-terra ring-1 ring-terra/20">
+      <Clock size={10} />
+      Pending review
     </span>
   );
 }
@@ -92,8 +92,6 @@ export default function MyActivity() {
       ]);
       if (plantsRes.status === 'fulfilled') setMyPlants(plantsRes.value);
       if (relationsRes.status === 'fulfilled') setMyRelations(relationsRes.value);
-      // Surface an error only when both failed *and* it's not a plain network drop —
-      // a new user with no activity shouldn't see "Failed to fetch".
       if (plantsRes.status === 'rejected' && relationsRes.status === 'rejected') {
         const reason = plantsRes.reason;
         const msg = reason instanceof Error ? reason.message : String(reason);
@@ -195,38 +193,44 @@ export default function MyActivity() {
   return (
     <FadeIn>
       <div className="max-w-5xl mx-auto px-4 py-10">
-        <div className="flex items-center gap-3 mb-8">
-          <Activity size={28} className="text-forest" />
-          <h1 className="text-3xl text-forest-dark m-0">My Activity</h1>
-          <span className="ml-2 text-sm text-forest/60">{user.email}</span>
+        {/* Hero */}
+        <div className="mb-8 animate-fade-in-up">
+          <p className="text-xs uppercase tracking-[0.25em] text-forest/50 mb-2">You</p>
+          <div className="flex items-baseline gap-3 flex-wrap">
+            <h1 className="serif text-4xl text-forest-dark m-0 tracking-tight">
+              <Activity className="inline-block mr-2 -mt-2 text-forest" size={30} />
+              My activity
+            </h1>
+            <span className="text-sm text-forest/55 truncate">{user.email}</span>
+          </div>
         </div>
 
         {error && (
-          <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-red-700 mb-6">
+          <div className="rounded-2xl bg-terra/10 border border-terra/30 px-5 py-4 text-terra mb-6">
             {error}
           </div>
         )}
 
         {loading ? (
-          <CenteredSpinner label="Loading your activity..." />
+          <CenteredSpinner label="Loading your activity…" />
         ) : (
           <>
             {/* Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-10 animate-fade-in-up delay-75">
               <StatTile
                 value={myPlants.length}
                 label="Plants added"
-                icon={<Leaf size={20} />}
+                icon={<Leaf size={20} strokeWidth={1.7} />}
               />
               <StatTile
                 value={myRelations.length}
                 label="Relations added"
-                icon={<GitBranch size={20} />}
+                icon={<GitBranch size={20} strokeWidth={1.7} />}
               />
               <StatTile
                 value={myPlants.length + myRelations.length}
                 label="Total contributions"
-                icon={<Sprout size={20} />}
+                icon={<Sprout size={20} strokeWidth={1.7} />}
               />
               <StatTile
                 value={
@@ -234,24 +238,24 @@ export default function MyActivity() {
                   myRelations.filter((r) => !r.approved).length
                 }
                 label="Pending approval"
-                icon={<Clock size={20} />}
+                icon={<Clock size={20} strokeWidth={1.7} />}
               />
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Plants I added */}
+            <div className="grid md:grid-cols-2 gap-8 animate-fade-in-up delay-150">
+              {/* Plants */}
               <section>
                 <div className="flex items-center gap-2 mb-4">
                   <Leaf size={18} className="text-forest" />
-                  <h2 className="text-xl text-forest-dark m-0">Plants I added</h2>
-                  <span className="ml-auto text-sm text-forest/50">
+                  <h2 className="serif text-xl text-forest-dark m-0 tracking-tight">Plants I added</h2>
+                  <span className="ml-auto text-[11px] font-bold uppercase tracking-wider text-forest/45">
                     {myPlants.length}
                   </span>
                 </div>
 
                 {myPlants.length === 0 ? (
                   <EmptyState
-                    icon={<Leaf size={32} />}
+                    icon={<Leaf size={30} strokeWidth={1.5} />}
                     title="No plants yet."
                     subtitle="Add a plant to see it here."
                   />
@@ -260,7 +264,7 @@ export default function MyActivity() {
                     {myPlants.map((plant) => (
                       <div
                         key={plant.id}
-                        className="group rounded-xl border border-forest/10 bg-white/60 px-4 py-3 shadow-sm hover:shadow-md transition-shadow"
+                        className="group card-soft rounded-2xl px-4 py-3 transition-all hover:shadow-md"
                       >
                         {editingPlantId === plant.id && editPlantForm ? (
                           <div className="flex flex-col gap-4">
@@ -271,13 +275,13 @@ export default function MyActivity() {
                             <div className="flex justify-end gap-2">
                               <button
                                 onClick={cancelEditPlant}
-                                className="px-3 py-1.5 text-sm rounded-lg text-forest hover:bg-forest/5"
+                                className="px-3 py-1.5 text-sm rounded-xl text-forest hover:bg-forest/5 transition-colors"
                               >
                                 Cancel
                               </button>
                               <button
                                 onClick={saveEditPlant}
-                                className="px-3 py-1.5 text-sm rounded-lg bg-forest text-cream font-semibold hover:bg-forest-dark"
+                                className="px-3 py-1.5 text-sm rounded-xl bg-forest text-cream font-semibold hover:bg-forest-dark transition-colors shadow-sm shadow-forest/20"
                               >
                                 Save
                               </button>
@@ -292,28 +296,26 @@ export default function MyActivity() {
                                 </p>
                                 {!plant.approved && <PendingChip />}
                               </div>
-                              <p className="text-xs text-forest/60 mt-0.5 m-0">
-                                Planting: {monthLabel(plant.planting_start)}–
-                                {monthLabel(plant.planting_end)}
-                                {' · '}
-                                Harvest: {monthLabel(plant.harvesting_start)}–
-                                {monthLabel(plant.harvesting_end)}
-                                {' · '}
-                                {plant.height} cm
+                              <p className="text-xs text-forest/55 mt-1 m-0">
+                                Plant <span className="text-forest-dark font-medium">{monthLabel(plant.planting_start)}–{monthLabel(plant.planting_end)}</span>
+                                <span className="text-forest/25"> · </span>
+                                Harvest <span className="text-forest-dark font-medium">{monthLabel(plant.harvesting_start)}–{monthLabel(plant.harvesting_end)}</span>
+                                <span className="text-forest/25"> · </span>
+                                <span className="text-forest-dark font-medium">{plant.height} cm</span>
                               </p>
                             </div>
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                               <button
                                 onClick={() => startEditPlant(plant)}
                                 title="Edit"
-                                className="p-1.5 rounded-lg text-forest/70 hover:bg-forest/10 hover:text-forest"
+                                className="p-1.5 rounded-full text-forest/65 hover:bg-forest/10 hover:text-forest transition-colors"
                               >
                                 <Pencil size={14} />
                               </button>
                               <button
                                 onClick={() => setConfirmDeletePlant(plant)}
                                 title="Delete"
-                                className="p-1.5 rounded-lg text-terra/70 hover:bg-terra/10 hover:text-terra"
+                                className="p-1.5 rounded-full text-terra/65 hover:bg-terra/10 hover:text-terra transition-colors"
                               >
                                 <Trash2 size={14} />
                               </button>
@@ -326,21 +328,21 @@ export default function MyActivity() {
                 )}
               </section>
 
-              {/* Relationships I added */}
+              {/* Relationships */}
               <section>
                 <div className="flex items-center gap-2 mb-4">
                   <GitBranch size={18} className="text-forest" />
-                  <h2 className="text-xl text-forest-dark m-0">
+                  <h2 className="serif text-xl text-forest-dark m-0 tracking-tight">
                     Relationships I added
                   </h2>
-                  <span className="ml-auto text-sm text-forest/50">
+                  <span className="ml-auto text-[11px] font-bold uppercase tracking-wider text-forest/45">
                     {myRelations.length}
                   </span>
                 </div>
 
                 {myRelations.length === 0 ? (
                   <EmptyState
-                    icon={<GitBranch size={32} />}
+                    icon={<GitBranch size={30} strokeWidth={1.5} />}
                     title="No relationships yet."
                     subtitle="Add a relationship to see it here."
                   />
@@ -349,11 +351,11 @@ export default function MyActivity() {
                     {myRelations.map((rel) => (
                       <div
                         key={rel.id}
-                        className="group rounded-xl border border-forest/10 bg-white/60 px-4 py-3 shadow-sm hover:shadow-md transition-shadow"
+                        className="group card-soft rounded-2xl px-4 py-3 transition-all hover:shadow-md"
                       >
                         {editingRelationId === rel.id && editRelationDraft ? (
                           <div className="flex flex-col gap-3">
-                            <div className="flex items-center gap-2 text-sm">
+                            <div className="flex items-center gap-2 text-sm flex-wrap">
                               <span className="font-medium text-forest-dark">
                                 {plantName(rel.plant_a_id)}
                               </span>
@@ -364,10 +366,10 @@ export default function MyActivity() {
                                     is_companion: !editRelationDraft.is_companion,
                                   })
                                 }
-                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold transition-colors ${
+                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors ${
                                   editRelationDraft.is_companion
-                                    ? 'bg-forest/15 text-forest'
-                                    : 'bg-terra/15 text-terra'
+                                    ? 'bg-forest/10 text-forest ring-1 ring-forest/20'
+                                    : 'bg-terra/10 text-terra ring-1 ring-terra/20'
                                 }`}
                               >
                                 {editRelationDraft.is_companion ? (
@@ -376,8 +378,8 @@ export default function MyActivity() {
                                   <Swords size={11} />
                                 )}
                                 {editRelationDraft.is_companion
-                                  ? 'companion'
-                                  : 'antagonist'}
+                                  ? 'Companion'
+                                  : 'Antagonist'}
                               </button>
                               <span className="font-medium text-forest-dark">
                                 {plantName(rel.plant_b_id)}
@@ -393,19 +395,19 @@ export default function MyActivity() {
                               }
                               placeholder="Why this relationship? (optional)"
                               rows={2}
-                              className="w-full rounded-lg border border-forest/30 bg-cream px-3 py-2 text-sm text-forest-dark placeholder-forest/30 focus:outline-none focus:ring-2 focus:ring-forest/50"
+                              className="w-full rounded-xl border border-forest/20 bg-white/80 px-3 py-2 text-sm text-forest-dark placeholder-forest/30 focus:outline-none focus:ring-2 focus:ring-forest/40 focus:border-forest/40 transition-all resize-none"
                             />
                             <div className="flex justify-end gap-2">
                               <button
                                 onClick={cancelEditRelation}
-                                className="inline-flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg text-forest hover:bg-forest/5"
+                                className="inline-flex items-center gap-1 px-3 py-1.5 text-sm rounded-xl text-forest hover:bg-forest/5 transition-colors"
                               >
                                 <X size={14} />
                                 Cancel
                               </button>
                               <button
                                 onClick={saveEditRelation}
-                                className="inline-flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg bg-forest text-cream font-semibold hover:bg-forest-dark"
+                                className="inline-flex items-center gap-1 px-3 py-1.5 text-sm rounded-xl bg-forest text-cream font-semibold hover:bg-forest-dark transition-colors shadow-sm shadow-forest/20"
                               >
                                 <Check size={14} />
                                 Save
@@ -420,13 +422,14 @@ export default function MyActivity() {
                                   {plantName(rel.plant_a_id)}
                                 </span>
                                 <span
-                                  className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                                  className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
                                     rel.is_companion
-                                      ? 'bg-forest/15 text-forest'
-                                      : 'bg-terra/15 text-terra'
+                                      ? 'bg-forest/10 text-forest ring-1 ring-forest/20'
+                                      : 'bg-terra/10 text-terra ring-1 ring-terra/20'
                                   }`}
                                 >
-                                  {rel.is_companion ? 'companion' : 'antagonist'}
+                                  {rel.is_companion ? <Heart size={10} /> : <Swords size={10} />}
+                                  {rel.is_companion ? 'Companion' : 'Antagonist'}
                                 </span>
                                 <span className="font-medium text-forest-dark">
                                   {plantName(rel.plant_b_id)}
@@ -434,7 +437,7 @@ export default function MyActivity() {
                                 {!rel.approved && <PendingChip />}
                               </div>
                               {rel.explanation && (
-                                <p className="text-xs text-forest/60 mt-1 m-0 italic">
+                                <p className="text-xs text-forest/55 mt-1.5 m-0 italic leading-relaxed">
                                   "{rel.explanation}"
                                 </p>
                               )}
@@ -443,14 +446,14 @@ export default function MyActivity() {
                               <button
                                 onClick={() => startEditRelation(rel)}
                                 title="Edit"
-                                className="p-1.5 rounded-lg text-forest/70 hover:bg-forest/10 hover:text-forest"
+                                className="p-1.5 rounded-full text-forest/65 hover:bg-forest/10 hover:text-forest transition-colors"
                               >
                                 <Pencil size={14} />
                               </button>
                               <button
                                 onClick={() => setConfirmDeleteRelation(rel)}
                                 title="Delete"
-                                className="p-1.5 rounded-lg text-terra/70 hover:bg-terra/10 hover:text-terra"
+                                className="p-1.5 rounded-full text-terra/65 hover:bg-terra/10 hover:text-terra transition-colors"
                               >
                                 <Trash2 size={14} />
                               </button>

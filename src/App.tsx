@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { PlantsProvider } from './context/PlantsContext';
+import { PopupProvider } from './context/PopupContext';
 import Header from './components/Header';
 import AddPlantForm from './pages/AddPlantForm';
 import AddRelationshipForm from './pages/AddRelationshipForm';
@@ -27,22 +28,24 @@ function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <PlantsProvider>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Navigate to="/plants" replace />} />
-              <Route path="/plants" element={<ShowAllPlants />} />
-              <Route path="/plants/:id" element={<PlantDetail />} />
-              <Route path="/relations" element={<Relations />} />
-              <Route path="/add-plant" element={<AddPlantForm />} />
-              <Route path="/add-relationship" element={<AddRelationshipForm />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/my-activity" element={<MyActivity />} />
-            </Routes>
-          </Layout>
-        </PlantsProvider>
-      </AuthProvider>
+      <PopupProvider>
+        <AuthProvider>
+          <PlantsProvider>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Navigate to="/plants" replace />} />
+                <Route path="/plants" element={<ShowAllPlants />} />
+                <Route path="/plants/:id" element={<PlantDetail />} />
+                <Route path="/relations" element={<Relations />} />
+                <Route path="/add-plant" element={<AddPlantForm />} />
+                <Route path="/add-relationship" element={<AddRelationshipForm />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/my-activity" element={<MyActivity />} />
+              </Routes>
+            </Layout>
+          </PlantsProvider>
+        </AuthProvider>
+      </PopupProvider>
     </BrowserRouter>
   );
 }

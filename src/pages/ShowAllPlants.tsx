@@ -9,6 +9,7 @@ import {
   TreePine,
   Leaf,
   Sprout,
+  Search,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { usePlants } from '../context/PlantsContext';
@@ -48,8 +49,8 @@ function SortButton({
   return (
     <button
       onClick={() => onClick(sortKey)}
-      className={`flex items-center gap-1 text-sm font-semibold transition-colors ${
-        active ? 'text-forest' : 'text-forest/50 hover:text-forest'
+      className={`flex items-center gap-1 text-xs font-bold uppercase tracking-wider transition-colors ${
+        active ? 'text-forest' : 'text-forest/45 hover:text-forest'
       }`}
     >
       {label}
@@ -94,41 +95,50 @@ export default function ShowAllPlants() {
   return (
     <FadeIn>
       <div className="max-w-6xl mx-auto px-4 py-10">
-        <div className="flex items-center gap-3 mb-6">
-          <Leaf size={28} className="text-forest" />
-          <h1 className="text-3xl text-forest-dark m-0">All Plants</h1>
-          <span className="ml-auto text-sm text-forest/60">
-            {plants.length} plants in database
-          </span>
+        {/* Hero */}
+        <div className="mb-8 animate-fade-in-up">
+          <p className="text-xs uppercase tracking-[0.25em] text-forest/50 mb-2">Browse</p>
+          <div className="flex items-baseline gap-3 flex-wrap">
+            <h1 className="serif text-4xl text-forest-dark m-0 tracking-tight">All plants</h1>
+            <span className="text-sm text-forest/55">
+              {plants.length} in the database
+            </span>
+          </div>
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col md:flex-row md:items-center gap-3 mb-6">
-          <input
-            type="text"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            placeholder="Filter by name..."
-            className="flex-1 max-w-sm rounded-lg border border-forest/30 bg-cream px-3 py-2 text-forest-dark placeholder-forest/30 focus:outline-none focus:ring-2 focus:ring-forest/50"
-          />
+        <div className="card-soft rounded-2xl p-3 sm:p-4 mb-6 flex flex-col md:flex-row md:items-center gap-3 animate-fade-in-up delay-75">
+          <div className="flex-1 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/50 border border-forest/15">
+            <Search size={16} className="text-forest/55 shrink-0" />
+            <input
+              type="text"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              placeholder="Filter by name…"
+              className="flex-1 bg-transparent outline-none text-forest-dark placeholder-forest/35 text-sm"
+            />
+            {filter && (
+              <button onClick={() => setFilter('')} className="text-xs text-forest/55 hover:text-forest">
+                Clear
+              </button>
+            )}
+          </div>
 
           {view === 'cards' && (
             <div className="flex items-center gap-2">
-              <label className="text-xs text-forest/60">Sort by</label>
+              <label className="text-xs uppercase tracking-wider text-forest/55">Sort</label>
               <select
                 value={sortKey}
                 onChange={(e) => setSortKey(e.target.value as SortKey)}
-                className="rounded-lg border border-forest/30 bg-cream px-2 py-1 text-sm text-forest-dark focus:outline-none focus:ring-2 focus:ring-forest/50"
+                className="rounded-xl border border-forest/20 bg-white/80 px-2.5 py-1.5 text-sm text-forest-dark focus:outline-none focus:ring-2 focus:ring-forest/40 transition-all"
               >
                 {SORT_OPTIONS.map((o) => (
-                  <option key={o.key} value={o.key}>
-                    {o.label}
-                  </option>
+                  <option key={o.key} value={o.key}>{o.label}</option>
                 ))}
               </select>
               <button
                 onClick={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
-                className="p-1.5 rounded-lg border border-forest/20 text-forest/70 hover:bg-forest/5 transition-colors"
+                className="p-1.5 rounded-lg border border-forest/20 bg-white/60 text-forest/70 hover:bg-forest/10 transition-colors"
                 title={sortDir === 'asc' ? 'Ascending' : 'Descending'}
               >
                 {sortDir === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
@@ -136,14 +146,14 @@ export default function ShowAllPlants() {
             </div>
           )}
 
-          <div className="md:ml-auto flex items-center gap-1 bg-soil rounded-xl p-1">
+          <div className="md:ml-auto inline-flex rounded-full bg-cream-dark/60 ring-1 ring-forest/15 p-0.5 gap-0.5">
             <button
               onClick={() => setView('cards')}
               title="Card view"
-              className={`p-2 rounded-lg transition-colors ${
+              className={`p-1.5 rounded-full transition-all ${
                 view === 'cards'
-                  ? 'bg-white text-forest-dark shadow-sm'
-                  : 'text-forest/60 hover:bg-forest/5'
+                  ? 'bg-forest text-cream shadow-sm shadow-forest/20'
+                  : 'text-forest/55 hover:text-forest hover:bg-white/50'
               }`}
             >
               <Grid3x3 size={16} />
@@ -151,10 +161,10 @@ export default function ShowAllPlants() {
             <button
               onClick={() => setView('table')}
               title="Table view"
-              className={`p-2 rounded-lg transition-colors ${
+              className={`p-1.5 rounded-full transition-all ${
                 view === 'table'
-                  ? 'bg-white text-forest-dark shadow-sm'
-                  : 'text-forest/60 hover:bg-forest/5'
+                  ? 'bg-forest text-cream shadow-sm shadow-forest/20'
+                  : 'text-forest/55 hover:text-forest hover:bg-white/50'
               }`}
             >
               <List size={16} />
@@ -162,20 +172,20 @@ export default function ShowAllPlants() {
           </div>
         </div>
 
-        {loading && <CenteredSpinner label="Loading plants..." />}
+        {loading && <CenteredSpinner label="Loading plants…" />}
 
         {error && (
-          <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-red-700 mb-4">
+          <div className="rounded-2xl bg-terra/10 border border-terra/30 px-5 py-4 text-terra">
             {error}
           </div>
         )}
 
         {!loading && !error && filtered.length === 0 && (
-          <EmptyState icon={<Sprout size={40} />} title="No plants found." />
+          <EmptyState icon={<Sprout size={36} strokeWidth={1.5} />} title="No plants found." />
         )}
 
         {!loading && filtered.length > 0 && view === 'cards' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-fade-in-up delay-150">
             {filtered.map((plant) => (
               <PlantCard key={plant.id} plant={plant} />
             ))}
@@ -183,11 +193,11 @@ export default function ShowAllPlants() {
         )}
 
         {!loading && filtered.length > 0 && view === 'table' && (
-          <div className="rounded-2xl border border-forest/10 overflow-hidden shadow-sm bg-white/60">
-            <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-2 px-4 py-3 bg-soil border-b border-forest/10 text-xs">
+          <div className="card-soft rounded-2xl overflow-hidden animate-fade-in-up delay-150">
+            <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-2 px-4 py-3 bg-forest/5 border-b border-forest/10 text-xs">
               <SortButton label="Name" sortKey="name" current={sortKey} dir={sortDir} onClick={handleSort} />
               <SortButton label="Planting" sortKey="planting_start" current={sortKey} dir={sortDir} onClick={handleSort} />
-              <span className="text-forest/50 font-semibold text-sm">Harvesting</span>
+              <span className="text-forest/45 font-bold uppercase tracking-wider">Harvesting</span>
               <SortButton label="Height" sortKey="height" current={sortKey} dir={sortDir} onClick={handleSort} />
               <SortButton label="Water" sortKey="water" current={sortKey} dir={sortDir} onClick={handleSort} />
               <span />
@@ -197,7 +207,7 @@ export default function ShowAllPlants() {
               <div key={plant.id}>
                 <div
                   className={`grid grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-2 px-4 py-3 border-b border-forest/5 items-center cursor-pointer hover:bg-forest/5 transition-colors ${
-                    expanded === plant.id ? 'bg-cream' : ''
+                    expanded === plant.id ? 'bg-forest/5' : ''
                   }`}
                   onClick={() => setExpanded(expanded === plant.id ? null : plant.id)}
                 >
@@ -223,7 +233,7 @@ export default function ShowAllPlants() {
                   </span>
                   <span className="text-sm text-forest/70">{plant.height} cm</span>
                   <span className="flex items-center gap-1 text-sm text-forest/70">
-                    <Droplets size={12} className="text-blue-400" />
+                    <Droplets size={12} className="text-forest-light" />
                     {plant.water} ml
                   </span>
                   <ChevronDown
@@ -235,28 +245,22 @@ export default function ShowAllPlants() {
                 </div>
 
                 {expanded === plant.id && (
-                  <div className="px-6 py-4 bg-soil/60 border-b border-forest/10 grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
+                  <div className="px-6 py-4 bg-cream-dark/40 border-b border-forest/10 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm animate-fade-in">
                     <div>
-                      <span className="text-forest/50">Spread</span>
-                      <p className="text-forest-dark font-medium">{plant.spread} cm</p>
+                      <p className="text-[10px] uppercase tracking-wider text-forest/45 mb-1">Spread</p>
+                      <p className="text-forest-dark font-medium m-0">{plant.spread} cm</p>
                     </div>
                     <div>
-                      <span className="text-forest/50">Shadow</span>
-                      <p>
-                        <BoolBadge value={plant.shadow} trueLabel="Likes shade" falseLabel="Full sun" />
-                      </p>
+                      <p className="text-[10px] uppercase tracking-wider text-forest/45 mb-1">Shadow</p>
+                      <BoolBadge value={plant.shadow} trueLabel="Likes shade" falseLabel="Full sun" />
                     </div>
                     <div>
-                      <span className="text-forest/50">Body water</span>
-                      <p>
-                        <BoolBadge value={plant.body_water} trueLabel="Tolerates" falseLabel="Avoid" />
-                      </p>
+                      <p className="text-[10px] uppercase tracking-wider text-forest/45 mb-1">Body water</p>
+                      <BoolBadge value={plant.body_water} trueLabel="Tolerates" falseLabel="Avoid" />
                     </div>
                     <div>
-                      <span className="text-forest/50">Type</span>
-                      <p>
-                        <BoolBadge value={plant.is_tree} trueLabel="Tree" falseLabel="Plant" />
-                      </p>
+                      <p className="text-[10px] uppercase tracking-wider text-forest/45 mb-1">Type</p>
+                      <BoolBadge value={plant.is_tree} trueLabel="Tree" falseLabel="Plant" />
                     </div>
                   </div>
                 )}

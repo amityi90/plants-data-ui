@@ -26,7 +26,7 @@ export default function MonthSelect({ id, value, onChange, className = '' }: Pro
       id={id}
       value={value}
       onChange={e => onChange(Number(e.target.value))}
-      className={`w-full rounded-lg border border-forest/30 bg-cream px-3 py-2 text-forest-dark focus:outline-none focus:ring-2 focus:ring-forest/50 ${className}`}
+      className={`w-full rounded-xl border border-forest/20 bg-white/80 px-3 py-2 text-sm text-forest-dark focus:outline-none focus:ring-2 focus:ring-forest/40 focus:border-forest/40 transition-all ${className}`}
     >
       {MONTHS.map(m => (
         <option key={m.value} value={m.value}>{m.label}</option>

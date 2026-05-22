@@ -1,18 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap');
 
 @import "tailwindcss";
 
 @theme {
-  --color-forest:       #2d6a4f;
-  --color-forest-light: #52b788;
-  --color-forest-dark:  #1b4332;
-  --color-cream:        #fefae0;
-  --color-cream-dark:   #fdf3c0;
-  --color-terra:        #bc6c25;
-  --color-terra-light:  #dda15e;
-  --color-bark:         #6b4423;
-  --color-moss:         #a7c957;
-  --color-soil:         #f5f0e8;
+  --color-forest:        #2d6a4f;
+  --color-forest-light:  #52b788;
+  --color-forest-dark:   #1b4332;
+  --color-cream:         #fefae0;
+  --color-cream-dark:    #fdf3c0;
+  --color-terra:         #bc6c25;
+  --color-terra-light:   #dda15e;
+  --color-bark:          #6b4423;
+  --color-moss:          #a7c957;
+  --color-soil:          #f5f0e8;
 
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-sans:  'Lato', system-ui, sans-serif;
@@ -22,23 +22,132 @@
   box-sizing: border-box;
 }
 
-body {
+html, body {
   margin: 0;
-  background-color: var(--color-cream);
+  min-height: 100vh;
   font-family: var(--font-sans);
   color: var(--color-forest-dark);
   -webkit-font-smoothing: antialiased;
+  background-color: var(--color-cream);
+  background-image:
+    radial-gradient(circle at 0% 0%,   rgba(82, 183, 136, 0.10) 0%, transparent 50%),
+    radial-gradient(circle at 100% 0%, rgba(188, 108, 37, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 50% 100%, rgba(167, 201, 87, 0.08) 0%, transparent 60%);
+  background-attachment: fixed;
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4 {
   font-family: var(--font-serif);
+  letter-spacing: -0.01em;
 }
+
+#root {
+  min-height: 100vh;
+}
+
+/* ---------- Decorative utilities ---------- */
+
+.serif         { font-family: var(--font-serif); }
+
+.card-soft {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.72) 0%, rgba(254, 250, 224, 0.85) 100%);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(45, 106, 79, 0.12);
+  box-shadow:
+    0 1px 2px  rgba(27, 67, 50, 0.04),
+    0 8px 24px rgba(27, 67, 50, 0.06);
+}
+
+.card-glass {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(45, 106, 79, 0.10);
+}
+
+.divider-leaf {
+  position: relative;
+  text-align: center;
+  margin: 2rem 0;
+}
+.divider-leaf::before,
+.divider-leaf::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 35%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(45, 106, 79, 0.25), transparent);
+}
+.divider-leaf::before { left: 0; }
+.divider-leaf::after  { right: 0; }
+.divider-leaf > span {
+  display: inline-block;
+  padding: 0 1rem;
+  color: rgba(45, 106, 79, 0.55);
+  font-size: 1.25rem;
+}
+
+/* ---------- Animations ---------- */
 
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: none; }
 }
 
-.animate-fade-in {
-  animation: fade-in 220ms ease-out both;
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes pop-in {
+  0%   { opacity: 0; transform: scale(0.85); }
+  60%  { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes icon-pop {
+  0%   { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+  60%  { opacity: 1; transform: scale(1.15) rotate(2deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes backdrop-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50%      { transform: translate(4px, -6px) rotate(2deg); }
+}
+
+.animate-fade-in        { animation: fade-in        220ms ease-out both; }
+.animate-fade-in-up     { animation: fade-in-up     420ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-pop-in         { animation: pop-in         280ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-icon-pop       { animation: icon-pop       420ms cubic-bezier(0.34, 1.56, 0.64, 1) both 60ms; }
+.animate-backdrop-fade  { animation: backdrop-fade  220ms ease-out both; }
+.animate-drift          { animation: drift          7s ease-in-out infinite; }
+
+.delay-75   { animation-delay: 75ms; }
+.delay-150  { animation-delay: 150ms; }
+.delay-225  { animation-delay: 225ms; }
+.delay-300  { animation-delay: 300ms; }
+.delay-450  { animation-delay: 450ms; }
+
+::selection {
+  background: rgba(82, 183, 136, 0.35);
+  color: var(--color-forest-dark);
+}
+
+/* ---------- Pointer cursor on all clickable controls ---------- */
+button:not(:disabled),
+[role="button"]:not(:disabled),
+label[for],
+summary,
+a[href] {
+  cursor: pointer;
+}
+button:disabled,
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed;
 }
