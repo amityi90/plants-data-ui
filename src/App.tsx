@@ -19,7 +19,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
       <footer className="border-t py-6 text-center text-sm" style={{ borderColor: 'rgba(45,106,79,0.1)', color: 'rgba(27,67,50,0.4)' }}>
-        Plants Data — open source, grown together
+        companion plants data — open source, grown together
       </footer>
     </div>
   );

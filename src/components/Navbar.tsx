@@ -71,7 +71,7 @@ export default function Navbar({ open, onClose, onLoginClick, onRegisterClick }:
         <div className="flex items-center justify-between px-5 py-4 border-b border-forest/10">
           <Link to="/" onClick={onClose} className="flex items-center gap-2 no-underline">
             <Leaf size={22} className="text-forest" />
-            <span className="serif text-lg font-semibold text-forest-dark leading-none">Plants Data</span>
+            <span className="serif text-lg font-semibold text-forest-dark leading-none">companion plants data</span>
           </Link>
           <button
             onClick={onClose}

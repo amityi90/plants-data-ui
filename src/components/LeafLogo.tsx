@@ -26,7 +26,7 @@ export default function LeafLogo() {
         className="text-xl leading-none"
         style={{ fontFamily: "'Playfair Display', serif", color: '#1b4332', fontWeight: 600 }}
       >
-        Plants Data
+        companion plants data
       </span>
     </Link>
   );

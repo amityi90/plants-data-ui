@@ -9,7 +9,7 @@ export default function About() {
           <p className="text-xs uppercase tracking-[0.25em] text-forest/50 mb-2">About</p>
           <h1 className="serif text-4xl text-forest-dark m-0 mb-3 tracking-tight">
             <Leaf className="inline-block mr-2 -mt-2 text-forest" size={30} />
-            Plants Data
+            companion plants data
           </h1>
           <p className="text-base text-forest/65 max-w-xl leading-relaxed">
             A community-built database of plants, their growing seasons, and the ways they help —
@@ -23,7 +23,7 @@ export default function About() {
             title="What is this?"
             delay=""
           >
-            Plants Data is an open-source collaborative database of plants and their relationships.
+            Companion Plants Data is an open-source collaborative database of plants and their relationships.
             We collect information about planting seasons, harvesting times, water needs, size, and
             whether plants grow better or worse near each other — a concept known as companion planting.
           </Section>
